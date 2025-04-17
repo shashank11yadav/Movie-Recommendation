@@ -119,54 +119,6 @@ Returns movie recommendations based on a provided movie title.
 }
 ```
 
-## 🌐 Deployment Guide
-
-### Backend Deployment on Render
-
-1. Create a free account at [render.com](https://render.com)
-2. Create a new Web Service and connect your GitHub repository
-3. Configure the service:
-   - **Name**: moviematch-api (or your preferred name)
-   - **Runtime**: Python 3
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `gunicorn app:create_app()`
-   - **Root Directory**: `backend`
-
-4. Add your movie dataset files:
-   - Go to your service dashboard
-   - Navigate to the "Disks" tab
-   - Create a permanent disk and mount it to `/data`
-   - Upload your dataset files to this location
-   - Update your code to reference `/data/tmdb_5000_credits.csv`
-
-### Frontend Deployment on Vercel
-
-1. Create a free account at [vercel.com](https://vercel.com)
-2. Import your GitHub repository
-3. Configure the project:
-   - **Framework Preset**: Vite
-   - **Root Directory**: `frontend`
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-
-4. Add environment variables:
-   - `VITE_API_URL`: Your Render backend URL (e.g., `https://moviematch-api.onrender.com`)
-
-5. Deploy your site
-
-## 🧪 Testing
-
-To run a complete test of the application:
-
-1. Ensure both frontend and backend are running
-2. Visit the frontend URL
-3. Search for a movie (e.g., "The Dark Knight")
-4. Verify that recommendations appear
-5. Check that similarity scores and UI elements display correctly
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🤝 Contributing
 

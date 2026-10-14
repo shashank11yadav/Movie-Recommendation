@@ -1,0 +1,6 @@
+dist
+public/data
+src/lib/golden.test-data.json
+playwright-report
+test-results
+package-lock.json

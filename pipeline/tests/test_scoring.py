@@ -51,6 +51,13 @@ def test_collab_share_matches_model(scorer: Scorer, catalog: Catalog) -> None:
     assert all(r.collab_share == 1.0 for r in recommend(scorer, catalog, liked, "collab"))
 
 
+def test_blend_counts_zero_out_movies_without_collab_lists(
+    scorer: Scorer, catalog: Catalog
+) -> None:
+    assert scorer.blend_counts[catalog.row_of(7)] == 0
+    assert scorer.blend_counts[catalog.row_of(296)] == 3
+
+
 def test_cold_movie_falls_back_to_content(scorer: Scorer, catalog: Catalog) -> None:
     muppets = catalog.row_of(7)  # two ratings, below the collaborative threshold
     assert recommend(scorer, catalog, [muppets], "collab") == []

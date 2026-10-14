@@ -102,7 +102,7 @@ def test_golden_cases_agree_with_export() -> None:
         scores: dict[int, float] = {}
         for movie_id in case["liked"]:
             src = row_of[movie_id]
-            n = m["ratings"][src]
+            n = m["ratings"][src] if lists("collab")[src] else 0
             w_cf = {"content": 0.0, "collab": 1.0}.get(case["model"], n / (n + beta))
             w_ct = {"content": 1.0, "collab": 0.0}.get(case["model"], (1 - w_cf) * gamma)
             for model, weight in (("collab", w_cf), ("content", w_ct)):

@@ -29,7 +29,9 @@ SCORE_DECIMALS = 9
 class HybridParams:
     """Per liked movie h with n_h ratings: weight w = n_h / (n_h + beta) on the
     collaborative list and (1 - w) * gamma on the content list. Movies with few
-    ratings lean on content, well-rated ones on co-ratings."""
+    ratings lean on content, well-rated ones on co-ratings. A movie with no
+    collaborative list at all is treated as n_h = 0, so its whole weight goes to
+    content instead of to an empty list."""
 
     beta: float
     gamma: float
@@ -57,9 +59,14 @@ class Scorer:
     counts: IntArray
     params: HybridParams
 
+    @property
+    def blend_counts(self) -> IntArray:
+        """Rating counts used for hybrid weights: zero where there is no collaborative list."""
+        return np.where(self.collab.rows[:, 0] >= 0, self.counts, 0)
+
     def item_matrix(self, model: Model) -> sp.csr_array:
         """Item x item matrix M so that a liked-set indicator vector v scores as v @ M."""
-        w_cf, w_ct = source_weights(model, self.counts, self.params)
+        w_cf, w_ct = source_weights(model, self.blend_counts, self.params)
         blended = (
             sp.diags_array(w_cf) @ self.collab.to_sparse()
             + sp.diags_array(w_ct) @ self.content.to_sparse()
@@ -96,7 +103,7 @@ def recommend(
     if model == "popularity":
         raise ValueError("the popularity baseline is evaluation-only")
     liked_rows = list(dict.fromkeys(int(r) for r in liked))
-    w_cf, w_ct = source_weights(model, scorer.counts, scorer.params)
+    w_cf, w_ct = source_weights(model, scorer.blend_counts, scorer.params)
 
     from_cf = np.zeros(len(catalog), dtype=np.float64)
     per_source = np.zeros((len(liked_rows), len(catalog)), dtype=np.float64)

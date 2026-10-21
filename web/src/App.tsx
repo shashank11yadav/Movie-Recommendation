@@ -10,6 +10,7 @@ import { createSearch, movieLabel } from './lib/search';
 import { MAX_LIKED, parseHash, toHash } from './lib/url';
 
 const REPO_URL = 'https://github.com/shashank11yadav/Movie-Recommendation';
+const CASE_STUDY_URL = 'https://www.shashankyadav.dev/work/movie-recommendation';
 
 const EXAMPLES: readonly { label: string; ids: readonly number[] }[] = [
   { label: 'Pulp Fiction', ids: [296] },
@@ -180,6 +181,10 @@ export function App() {
         <p>
           <a href={REPO_URL} rel="noopener noreferrer">
             Source code and evaluation
+          </a>{' '}
+          <span aria-hidden="true">·</span>{' '}
+          <a href={CASE_STUDY_URL} rel="noopener noreferrer">
+            By Shashank Yadav · shashankyadav.dev
           </a>
         </p>
       </footer>

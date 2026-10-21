@@ -6,6 +6,8 @@ Pick a few films you like and get ranked, explained recommendations from MovieLe
 
 **Live demo:** https://shashank11yadav.github.io/Movie-Recommendation/ (GitHub Pages, deployed from `main`)
 
+Write-up and other projects: [shashankyadav.dev/work/movie-recommendation](https://www.shashankyadav.dev/work/movie-recommendation)
+
 ## What it does
 
 - Fuzzy, accent-insensitive title search over 9,742 MovieLens films, fully keyboard operable.

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import shutil
+import ssl
 import tempfile
 import urllib.request
 import zipfile
@@ -39,12 +40,24 @@ def sha256_of(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _ssl_context() -> ssl.SSLContext:
+    """The default trust store plus the CA that files.grouplens.org chains to.
+
+    Partial-chain mode lets that CA act as a trust anchor even though it is
+    cross-signed rather than self-signed. See GROUPLENS_CA_PEM in config.
+    """
+    context = ssl.create_default_context()
+    context.load_verify_locations(cadata=config.GROUPLENS_CA_PEM)
+    context.verify_flags |= ssl.VERIFY_X509_PARTIAL_CHAIN
+    return context
+
+
 def _fetch(url: str, dest: Path, max_bytes: int) -> None:
     if not url.startswith("https://"):
         raise DatasetError(f"refusing non-HTTPS dataset URL: {url}")
     # Scheme is checked above, so file:// and custom handlers cannot be reached.
     request = urllib.request.Request(url, headers={"User-Agent": "movierec-pipeline"})  # noqa: S310
-    with urllib.request.urlopen(request, timeout=60) as response:  # noqa: S310
+    with urllib.request.urlopen(request, timeout=60, context=_ssl_context()) as response:  # noqa: S310
         written = 0
         with dest.open("wb") as out:
             while chunk := response.read(1 << 16):

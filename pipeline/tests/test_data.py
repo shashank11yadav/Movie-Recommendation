@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+import ssl
 import zipfile
 from collections.abc import Callable
 from pathlib import Path
@@ -57,6 +58,14 @@ def test_download_verifies_checksum(tmp_path: Path, monkeypatch: pytest.MonkeyPa
 def test_fetch_refuses_plain_http(tmp_path: Path) -> None:
     with pytest.raises(data.DatasetError, match="non-HTTPS"):
         data._fetch("http://example.com/x.zip", tmp_path / "x", 10)
+
+
+def test_grouplens_ca_matches_its_pinned_fingerprint() -> None:
+    der = ssl.PEM_cert_to_DER_cert(config.GROUPLENS_CA_PEM)
+    assert hashlib.sha256(der).hexdigest() == config.GROUPLENS_CA_SHA256
+    context = data._ssl_context()
+    assert context.verify_mode == ssl.CERT_REQUIRED
+    assert context.check_hostname
 
 
 def test_extract_only_writes_expected_members(tmp_path: Path) -> None:
